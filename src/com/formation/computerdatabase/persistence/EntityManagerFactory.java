@@ -34,20 +34,14 @@ public enum EntityManagerFactory {
 		try {
 			properties.load(EntityManagerFactory.class.getClassLoader().getResourceAsStream("/dbconf.properties"));
 		} catch (Exception e) {
-			String message = new StringBuilder("Couldn't load db configuration properties file: ").append(
-					e.getMessage()).toString();
-			System.err.println(message);
-			throw new RuntimeException(message, e);
+			throw new RuntimeException("Couldn't load db configuration properties file: ", e);
 		}
 
 		// Load JDBC Driver
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
-			String message = new StringBuilder("Couldn't load db configuration properties file: ").append(
-					e.getMessage()).toString();
-			System.err.println(message);
-			throw new RuntimeException(message, e);
+			throw new RuntimeException("Couldn't load MySQL Driver: ", e);
 		}
 
 		// Init DAOs
@@ -69,9 +63,7 @@ public enum EntityManagerFactory {
 			return DriverManager.getConnection(properties.getProperty("db.url"), properties.getProperty("db.user"),
 					properties.getProperty("db.password"));
 		} catch (SQLException e) {
-			String message = new StringBuilder("Couldn't load jdbc connection: ").append(e.getMessage()).toString();
-			System.err.println(message);
-			throw new PersistenceException(message, e);
+			throw new PersistenceException("Couldn't connect to jdbc server: ", e);
 		}
 	}
 
@@ -80,17 +72,26 @@ public enum EntityManagerFactory {
 	}
 
 	public void closeConnection(Connection conn, Statement stmt, ResultSet rs) {
+
 		try {
-			if (conn != null)
-				conn.close();
-			if (stmt != null)
-				stmt.close();
 			if (rs != null)
 				rs.close();
 		} catch (SQLException e) {
-			String message = new StringBuilder("Couldn't close jdbc connection: ").append(e.getMessage()).toString();
-			throw new PersistenceException(message, e);
+			throw new PersistenceException("Couldn't close ResultSet: ", e);
+		}
+
+		try {
+			if (stmt != null)
+				stmt.close();
+		} catch (SQLException e) {
+			throw new PersistenceException("Couldn't close Statement: ", e);
+		}
+
+		try {
+			if (conn != null)
+				conn.close();
+		} catch (SQLException e) {
+			throw new PersistenceException("Couldn't close Connection: ", e);
 		}
 	}
-
 }
