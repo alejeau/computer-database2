@@ -96,13 +96,32 @@ public class ComputerDaoImpl implements ComputerDao {
 			}
 		}
 	}
-
+	
+	private static final String DELETE = "delete computer cp where cp.id= ?";
+		
 	@Override
 	public void delete(Long id) {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		if (id != null) {
+			try {
+				conn = EntityManagerFactory.INSTANCE.getConnection();
+				stmt = conn.prepareStatement(DELETE);
+				stmt.setLong(1, id);
+				stmt.executeUpdate();
+			} catch (SQLException e) {
+				throw new PersistenceException(e.getMessage(), e);
+			} finally {
+				EntityManagerFactory.INSTANCE.closeConnection(conn, stmt);
+			}
+		}
 	}
 
 	@Override
 	public void delete(List<Long> ids) {
+		for(Long id: ids) {
+			this.delete(id);
+		}
 	}
 
 }
