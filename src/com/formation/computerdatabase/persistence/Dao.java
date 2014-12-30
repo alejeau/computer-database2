@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.formation.computerdatabase.exception.DaoStubException;
 import com.formation.computerdatabase.persistence.mapper.RowMapper;
-
+ 
 public interface Dao<T> {
 	
 	static final String KEY = "invalid";

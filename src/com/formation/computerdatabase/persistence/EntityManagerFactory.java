@@ -32,7 +32,7 @@ public enum EntityManagerFactory {
 		// Retrieve connection properties
 		properties = new Properties();
 		try {
-			properties.load(EntityManagerFactory.class.getClassLoader().getResourceAsStream("/dbconf.properties"));
+			properties.load(EntityManagerFactory.class.getClassLoader().getResourceAsStream("dbconf.properties"));
 		} catch (Exception e) {
 			String message = new StringBuilder("Couldn't load db configuration properties file: ").append(
 					e.getMessage()).toString();
