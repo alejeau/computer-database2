@@ -6,13 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.formation.computerdatabase.exception.DateFormatException;
+import com.formation.computerdatabase.util.DateUtil;
 
 public class Computer {
-
-	/*--------------------------------------------------------------
-	 * Static Attributes
-	 --------------------------------------------------------------*/
-	public static final String DATE_FORMAT = "dd-mm-YYYY";
 
 	/*--------------------------------------------------------------
 	 * Attributes
@@ -124,12 +120,25 @@ public class Computer {
 		return introduced;
 	}
 
+	public void setIntroduced(String introduced) {
+		this.introduced = DateUtil.stringToDate(introduced);
+	}
+
 	public void setIntroduced(Date introduced) {
 		this.introduced = introduced;
+	}	
+
+	public String getIntroducedString() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public Date getDiscontinued() {
 		return discontinued;
+	}
+
+	public void setDiscontinued(String discontinued) {
+		this.discontinued = DateUtil.stringToDate(discontinued);
 	}
 
 	public void setDiscontinued(Date discontinued) {
@@ -169,14 +178,8 @@ public class Computer {
 			return this;
 		}
 
-		public Builder introduced(String introduced) {
-			DateFormat df = new SimpleDateFormat(DATE_FORMAT);
-			try {
-				c.introduced = df.parse(introduced);
-			} catch (ParseException e) {
-				e.printStackTrace();
-				throw new DateFormatException("Wrong date format was provided.", e);
-			}
+		public Builder introduced(String introduced) {			
+			c.introduced = DateUtil.stringToDate(introduced);
 			return this;
 		}
 
@@ -186,13 +189,7 @@ public class Computer {
 		}
 
 		public Builder discontinued(String discontinued) {
-			DateFormat df = new SimpleDateFormat(DATE_FORMAT);
-			try {
-				c.discontinued = df.parse(discontinued);
-			} catch (ParseException e) {
-				e.printStackTrace();
-				throw new DateFormatException("Wrong date format was provided.", e);
-			}
+			c.introduced = DateUtil.stringToDate(discontinued);
 			return this;
 		}
 
@@ -210,4 +207,5 @@ public class Computer {
 			return c;
 		}
 	}
+
 }
