@@ -3,15 +3,16 @@ package com.formation.computerdatabase.persistence;
 import java.util.List;
 
 import com.formation.computerdatabase.exception.DaoStubException;
-import com.formation.computerdatabase.persistence.mapper.RowMapper;
- 
+
+
 public interface Dao<T> {
 	
 	static final String KEY = "invalid";
 	
 	default void create(T o) {
 		throw new DaoStubException();
-	};
+	}
+
 	default List<T> retrieveAll() {
 		throw new DaoStubException();
 	}
@@ -27,5 +28,5 @@ public interface Dao<T> {
 	default void delete(List<Long> ids) {
 		throw new DaoStubException();
 	}
-	RowMapper<T> getRowMapper();
+
 }
