@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.formation.computerdatabase.exception.PersistenceException;
@@ -12,53 +11,13 @@ import com.formation.computerdatabase.model.Company;
 import com.formation.computerdatabase.persistence.CompanyDao;
 import com.formation.computerdatabase.persistence.EntityManagerFactory;
 import com.formation.computerdatabase.persistence.mapper.RowMapper;
+import com.formation.computerdatabase.persistence.mapper.impl.CompanyRowMapper;
 
 public class CompanyDaoImpl implements CompanyDao {
 
-	protected static class CompanyRowMapper implements RowMapper<Company> {
+	private RowMapper<Company> companyRowMapper = new CompanyRowMapper();
 
-		@Override
-		public Company mapRow(ResultSet rs) throws SQLException {
-			return mapRow(rs, "");
-		}
-
-		@Override
-		public Company mapRow(ResultSet rs, String prefix) throws SQLException {
-			if (prefix == null) {
-				throw new IllegalArgumentException("prefix cannot be null");
-			}
-			Company company = new Company();
-			if (rs == null || !rs.next()) {
-				return company;
-			}
-			company.setId(rs.getLong(prefix + "ID"));
-			company.setName(rs.getString(prefix + "NAME"));
-			return company;
-		}
-
-		@Override
-		public List<Company> mapRows(ResultSet rs) throws SQLException {
-			return mapRows(rs, "");
-		}
-
-		@Override
-		public List<Company> mapRows(ResultSet rs, String prefix) throws SQLException {
-			if (prefix == null) {
-				throw new IllegalArgumentException("prefix cannot be null");
-			}
-			List<Company> companies = new ArrayList<Company>();
-			if (rs == null || !rs.next()) {
-				return companies;
-			}
-			do {
-				companies.add(mapRow(rs, prefix));
-			} while (rs.next());
-			return companies;
-		}
-
-	}
-
-	private static final String RETRIEVE_ONE = "select * from computer where id = ?;";
+	private static final String RETRIEVE_ONE = "select ca.id, ca.name from company ca where ca.id = ?;";
 
 	@Override
 	public Company retrieveOne(Long id) {
@@ -72,7 +31,7 @@ public class CompanyDaoImpl implements CompanyDao {
 			stmt = conn.prepareStatement(RETRIEVE_ONE);
 			stmt.setLong(1, id);
 			rs = stmt.executeQuery(RETRIEVE_ONE);
-			company = getRowMapper().mapRow(rs);
+			company = companyRowMapper.mapRow(rs);
 		} catch (SQLException e) {
 			throw new PersistenceException(e.getMessage(), e);
 		} finally {
@@ -80,8 +39,8 @@ public class CompanyDaoImpl implements CompanyDao {
 		}
 		return company;
 	}
-	
-	private static final String RETRIEVE_ALL = "select * from computer;";
+
+	private static final String RETRIEVE_ALL = "select ca.id, ca.name from company ca;";
 
 	@Override
 	public List<Company> retrieveAll() {
@@ -94,7 +53,7 @@ public class CompanyDaoImpl implements CompanyDao {
 			conn = EntityManagerFactory.INSTANCE.getConnection();
 			stmt = conn.prepareStatement(RETRIEVE_ALL);
 			rs = stmt.executeQuery(RETRIEVE_ALL);
-			companies = getRowMapper().mapRows(rs);
+			companies = companyRowMapper.mapRows(rs);
 		} catch (SQLException e) {
 			throw new PersistenceException(e.getMessage(), e);
 		} finally {
@@ -103,8 +62,4 @@ public class CompanyDaoImpl implements CompanyDao {
 		return companies;
 	}
 
-	@Override
-	public RowMapper<Company> getRowMapper() {
-		return new CompanyRowMapper();
-	}
 }
