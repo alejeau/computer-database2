@@ -34,7 +34,7 @@ public class ComputerDaoImpl implements ComputerDao {
 		try {
 			conn = EntityManagerFactory.INSTANCE.getConnection();
 			stmt = conn.prepareStatement(RETRIEVE_ALL);
-			rs = stmt.executeQuery(RETRIEVE_ALL);
+			rs = stmt.executeQuery();
 			computers = computerRowMapper.mapRows(rs);
 		} catch (SQLException e) {
 			throw new PersistenceException(e.getMessage(), e);
@@ -57,7 +57,7 @@ public class ComputerDaoImpl implements ComputerDao {
 			conn = EntityManagerFactory.INSTANCE.getConnection();
 			stmt = conn.prepareStatement(RETRIEVE_ONE);
 			stmt.setLong(1, id);
-			rs = stmt.executeQuery(RETRIEVE_ONE);
+			rs = stmt.executeQuery();
 			computer = computerRowMapper.mapRow(rs);
 		} catch (SQLException e) {
 			throw new PersistenceException(e.getMessage(), e);
