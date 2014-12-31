@@ -18,8 +18,38 @@ public class ComputerDaoImpl implements ComputerDao {
 
 	private RowMapper<Computer> computerRowMapper = new ComputerRowMapper();
 
+	private static final String CREATE = "insert into computer cp (cp.name, cp.introduced, cp.discontinued, cp.company_id) values (?, ?, ?, ?);";
+
 	@Override
 	public void create(Computer computer) {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+
+		try {
+			conn = EntityManagerFactory.INSTANCE.getConnection();
+			stmt = conn.prepareStatement(CREATE);
+
+			Date introduced = new Date(computer.getIntroduced() != null ? computer.getIntroduced().getTime() : null);
+			Date discontinued = new Date(computer.getDiscontinued() != null ? computer.getDiscontinued().getTime()
+					: null);
+			Long companyId = computer.getCompany() != null ? computer.getCompany().getId() : null;
+
+			stmt.setString(1, computer.getName());
+			stmt.setDate(2, introduced);
+			stmt.setDate(3, discontinued);
+			stmt.setLong(4, companyId);
+			stmt.setLong(5, computer.getId());
+			stmt.execute();
+			rs = stmt.getGeneratedKeys();
+			if (rs.next()) {
+				computer.setId(rs.getLong(1));
+			}
+		} catch (SQLException e) {
+			throw new PersistenceException(e.getMessage(), e);
+		} finally {
+			EntityManagerFactory.INSTANCE.closeConnection(conn, stmt, rs);
+		}
 	}
 
 	private static final String RETRIEVE_ALL = "select cp.id, cp.name, cp.introduced, cp.discontinued, ca.id, ca.name from computer cp left join company ca on cp.company_id = ca.id;";
