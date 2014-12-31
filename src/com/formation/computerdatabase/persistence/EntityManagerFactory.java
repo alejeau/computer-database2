@@ -60,7 +60,7 @@ public enum EntityManagerFactory {
 
 	public Connection getConnection() {
 		try {
-			return DriverManager.getConnection(properties.getProperty("db.url"), properties.getProperty("db.user"),
+			return DriverManager.getConnection(properties.getProperty("db.url"), properties.getProperty("db.username"),
 					properties.getProperty("db.password"));
 		} catch (SQLException e) {
 			throw new PersistenceException("Couldn't connect to jdbc server: ", e);
