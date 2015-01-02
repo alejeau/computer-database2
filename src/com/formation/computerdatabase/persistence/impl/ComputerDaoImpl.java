@@ -18,7 +18,7 @@ public class ComputerDaoImpl implements ComputerDao {
 
 	private RowMapper<Computer> computerRowMapper = new ComputerRowMapper();
 
-	private static final String CREATE = "insert into computer cp (cp.name, cp.introduced, cp.discontinued, cp.company_id) values (?, ?, ?, ?);";
+	private static final String CREATE = "insert into computer(name, introduced, discontinued, company_id) values (?, ?, ?, ?);";
 
 	@Override
 	public void create(Computer computer) {
@@ -28,20 +28,27 @@ public class ComputerDaoImpl implements ComputerDao {
 
 		try {
 			conn = EntityManagerFactory.INSTANCE.getConnection();
-			stmt = conn.prepareStatement(CREATE);
-
-			Date introduced = new Date(computer.getIntroduced() != null ? computer.getIntroduced().getTime() : null);
-			Date discontinued = new Date(computer.getDiscontinued() != null ? computer.getDiscontinued().getTime()
-					: null);
-			Long companyId = computer.getCompany() != null ? computer.getCompany().getId() : null;
+			stmt = conn.prepareStatement(CREATE, PreparedStatement.RETURN_GENERATED_KEYS);
 
 			stmt.setString(1, computer.getName());
-			stmt.setDate(2, introduced);
-			stmt.setDate(3, discontinued);
-			stmt.setLong(4, companyId);
-			stmt.setLong(5, computer.getId());
-			stmt.execute();
+			if( computer.getIntroduced() != null ) {
+				stmt.setDate(2, new Date(computer.getIntroduced().getTime()));
+			} else {
+				stmt.setNull(2, java.sql.Types.NULL);
+			}
+			if(computer.getDiscontinued() != null) {
+				stmt.setDate(3, new Date(computer.getDiscontinued().getTime()));
+			} else {
+				stmt.setNull(3, java.sql.Types.NULL);
+			}
+			if(computer.getCompany() != null) {
+				stmt.setLong(4, computer.getCompany().getId());
+			} else {
+				stmt.setNull(4, java.sql.Types.NULL);
+			}
+			stmt.executeUpdate();
 			rs = stmt.getGeneratedKeys();
+			
 			if (rs.next()) {
 				computer.setId(rs.getLong(1));
 			}
@@ -97,7 +104,7 @@ public class ComputerDaoImpl implements ComputerDao {
 		return computer;
 	}
 
-	private static final String UPDATE = "update computer cp set cp.name = ?, cp.introduced = ?, cp.discontinued = ?, cp.company_id = ? where cp.id = ?";
+	private static final String UPDATE = "update computer set name = ?, introduced = ?, discontinued = ?, company_id = ? where id = ?";
 
 	@Override
 	public void update(Computer computer) {
@@ -107,16 +114,23 @@ public class ComputerDaoImpl implements ComputerDao {
 			try {
 				conn = EntityManagerFactory.INSTANCE.getConnection();
 				stmt = conn.prepareStatement(UPDATE);
-
-				Date introduced = new Date(computer.getIntroduced() != null ? computer.getIntroduced().getTime() : null);
-				Date discontinued = new Date(computer.getDiscontinued() != null ? computer.getDiscontinued().getTime()
-						: null);
-				Long companyId = computer.getCompany() != null ? computer.getCompany().getId() : null;
-
+				
 				stmt.setString(1, computer.getName());
-				stmt.setDate(2, introduced);
-				stmt.setDate(3, discontinued);
-				stmt.setLong(4, companyId);
+				if( computer.getIntroduced() != null ) {
+					stmt.setDate(2, new Date(computer.getIntroduced().getTime()));
+				} else {
+					stmt.setNull(2, java.sql.Types.NULL);
+				}
+				if(computer.getDiscontinued() != null) {
+					stmt.setDate(3, new Date(computer.getDiscontinued().getTime()));
+				} else {
+					stmt.setNull(3, java.sql.Types.NULL);
+				}
+				if(computer.getCompany() != null) {
+					stmt.setLong(4, computer.getCompany().getId());
+				} else {
+					stmt.setNull(4, java.sql.Types.NULL);
+				}
 				stmt.setLong(5, computer.getId());
 				stmt.executeUpdate();
 			} catch (SQLException e) {
@@ -127,7 +141,7 @@ public class ComputerDaoImpl implements ComputerDao {
 		}
 	}
 	
-	private static final String DELETE = "delete computer cp where cp.id= ?";
+	private static final String DELETE = "delete from computer where id= ?";
 		
 	@Override
 	public void delete(Long id) {
