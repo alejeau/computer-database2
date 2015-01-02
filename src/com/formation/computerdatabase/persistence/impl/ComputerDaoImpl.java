@@ -103,6 +103,30 @@ public class ComputerDaoImpl implements ComputerDao {
 		}
 		return computer;
 	}
+	
+	private static final String RETRIEVE_PAGE = "select * from computer limit ? offset ?";
+	
+	@Override
+	public List<Computer> retrieveComputersWithOffsetAndLimit(int page, int size) {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		List<Computer> computers = null;
+
+		try {
+			conn = EntityManagerFactory.INSTANCE.getConnection();
+			stmt = conn.prepareStatement(RETRIEVE_PAGE);
+			stmt.setLong(1, (page-1)*size);
+			stmt.setLong(1, size);
+			rs = stmt.executeQuery();
+			computers = computerRowMapper.mapRows(rs);
+		} catch (SQLException e) {
+			throw new PersistenceException(e.getMessage(), e);
+		} finally {
+			EntityManagerFactory.INSTANCE.closeConnection(conn, stmt, rs);
+		}
+		return computers;
+	}
 
 	private static final String UPDATE = "update computer set name = ?, introduced = ?, discontinued = ?, company_id = ? where id = ?";
 

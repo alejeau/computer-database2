@@ -2,6 +2,7 @@ package com.formation.computerdatabase.service.impl;
 
 import java.util.List;
 
+import com.formation.computerdatabase.commons.Pageable;
 import com.formation.computerdatabase.model.Company;
 import com.formation.computerdatabase.model.Computer;
 import com.formation.computerdatabase.persistence.CompanyDao;
@@ -42,6 +43,13 @@ public enum ComputerDatabaseServiceImpl implements ComputerDatabaseService {
 	@Override
 	public Company retrieveOneCompany(Long id) {
 		return companyDao.retrieveOne(id);
+	}
+	
+	@Override
+	public Pageable<Computer> retrievePage(Pageable<Computer> page) {
+		page.setComputers(computerDao.retrieveComputersWithOffsetAndLimit(page.getPage(),page.getSize()));
+		
+		return page;
 	}
 
 	@Override
