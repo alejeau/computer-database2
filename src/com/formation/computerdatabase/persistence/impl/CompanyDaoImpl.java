@@ -31,7 +31,7 @@ public class CompanyDaoImpl implements CompanyDao {
 			stmt = conn.prepareStatement(RETRIEVE_ONE);
 			System.out.println("id: "+id);
 			stmt.setLong(1, id);
-			rs = stmt.executeQuery(RETRIEVE_ONE);
+			rs = stmt.executeQuery();
 			company = companyRowMapper.mapRow(rs);
 		} catch (SQLException e) {
 			throw new PersistenceException(e.getMessage(), e);
@@ -53,7 +53,7 @@ public class CompanyDaoImpl implements CompanyDao {
 		try {
 			conn = EntityManagerFactory.INSTANCE.getConnection();
 			stmt = conn.prepareStatement(RETRIEVE_ALL);
-			rs = stmt.executeQuery(RETRIEVE_ALL);
+			rs = stmt.executeQuery();
 			companies = companyRowMapper.mapRows(rs);
 		} catch (SQLException e) {
 			throw new PersistenceException(e.getMessage(), e);

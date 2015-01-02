@@ -32,14 +32,14 @@ public class ConsoleClient {
 		System.out.println("d) Add computer");
 		System.out.println("e) Edit computer");
 		System.out.println("f) Delete computer");
-		System.out.println("x) Exit application");
+		System.out.println("g) Exit application");
 
 		// Option regex
-		Pattern p = Pattern.compile("^[a-f]$");
+		Pattern p = Pattern.compile("^[a-g]$");
 		String s = null;
 
 		do {
-			System.out.println("Choose an option (a-f):");
+			System.out.println("Choose an option (a-g):");
 			s = scanner.next();
 		} while (!p.matcher(s = s.toLowerCase()).find());
 
@@ -62,7 +62,7 @@ public class ConsoleClient {
 		case "f":
 			deleteComputer();
 			break;
-		case "x":
+		case "g":
 			exitApplication();
 			break;
 		}
@@ -105,18 +105,22 @@ public class ConsoleClient {
 
 	private void addComputer() {
 		System.out.println("Add computer:");
+		String intr = null;
 		String input = null;
 
 		Computer.Builder b = Computer.builder(getInput("Enter computer name: "));
 
 		Pattern p = Pattern.compile("^[1-2][0-9]{3}-([0][1-9]|1[0-2])-([0-2][1-9]|3[0-1])$");
 
-		input = getInputWithPattern("Enter introduced date (yyyy-mm-dd) or leave empty: ", p);
-		if (! input.isEmpty()) {
-			b.introduced(input);
+		intr = getInputWithPattern("Enter introduced date (yyyy-mm-dd) or leave empty: ", p);
+		if (! intr.isEmpty()) {
+			b.introduced(intr);
 		}
 
-		input = getInputWithPattern("Enter discontinued date (yyyy-mm-dd) or leave empty: ", p);
+		/* loop while the discontinued date is not older as the introducted date */
+		do {
+			input = getInputWithPattern("Enter discontinued date (yyyy-mm-dd) or leave empty: ", p);
+		} while ( (intr != null ) && ( DateUtil.stringToDate(input).before(DateUtil.stringToDate(intr))));
 		if (!input.isEmpty()) {
 			b.discontinued(input);
 		}
@@ -141,12 +145,11 @@ public class ConsoleClient {
 
 		System.out.println("Enter computer id: ");
 		l = scanner.nextLong();
-		scanner.close();
 		Computer c = service.retrieveOneComputer(l);
 
 		System.out.println(c.toString());
 		
-		if("y".equals(getInput("Do you wish to change the name? (y or n)"))) {
+		if("y".equals(this.getInput("Do you wish to change the name? (y or n)")) ) {
 			c.setName(getInput("Enter computer name: "));
 		}
 
@@ -169,6 +172,11 @@ public class ConsoleClient {
 			if (! input.isEmpty()) {
 				c.setDiscontinued(input);
 			}
+		}
+		
+		if("y".equals(getInput("Do you wish to change the campany id? (y or n)"))) {
+			l = scanner.nextLong();			
+			c.setCompany(service.retrieveOneCompany(l));
 		}
 		
 		service.saveComputer(c);
@@ -216,10 +224,13 @@ public class ConsoleClient {
 	}
 
 	private void anyKeyToMenu() {
-		System.out.println("Press any key to return to the main menu...");
+		System.out.println("Press 'r' to return to the main menu...");
 		String input = null;
 		do {
 			input = scanner.next();
+			if( "r".equals(input)) {
+				break;
+			}
 		} while (input.isEmpty());
 	}
 

@@ -40,7 +40,7 @@ public class ComputerRowMapper implements RowMapper<Computer> {
 			Company company = new Company();
 
 			computer.setId(rs.getLong(COMPUTER_PREFIX + "id"));
-			computer.setName(rs.getString(COMPUTER_PREFIX + "id"));
+			computer.setName(rs.getString(COMPUTER_PREFIX + "name"));
 			computer.setIntroduced(rs.getDate(COMPUTER_PREFIX + "introduced"));
 			computer.setDiscontinued(rs.getDate(COMPUTER_PREFIX + "discontinued"));
 			company.setId(rs.getLong(COMPANY_PREFIX + "id"));
