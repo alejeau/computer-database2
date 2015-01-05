@@ -1,6 +1,9 @@
 package com.formation.computerdatabase.model;
 
-
+/**
+ * This model represents a Company table's row in our database
+ *
+ */
 public class Company {
 
     /*--------------------------------------------------------------

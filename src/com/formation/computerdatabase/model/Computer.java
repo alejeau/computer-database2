@@ -4,6 +4,10 @@ import java.util.Date;
 
 import com.formation.computerdatabase.util.DateUtil;
 
+/**
+ * This model represents a Computer table's row in our database
+ *
+ */
 public class Computer {
 
 	/*--------------------------------------------------------------

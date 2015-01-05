@@ -3,8 +3,12 @@ package com.formation.computerdatabase.persistence;
 import java.util.List;
 
 import com.formation.computerdatabase.exception.DaoStubException;
-import com.formation.computerdatabase.persistence.mapper.RowMapper;
- 
+
+/**
+ * This generic interface provides the default methods for a DAO
+ *
+ * @param <T> the type of your DAO
+ */
 public interface Dao<T> {
 
 	static final String KEY = "invalid";
@@ -12,7 +16,6 @@ public interface Dao<T> {
 	default void create(T o) {
 		throw new DaoStubException();
 	}
-
 	default List<T> retrieveAll() {
 		throw new DaoStubException();
 	}

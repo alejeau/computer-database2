@@ -7,7 +7,8 @@ import java.util.regex.Pattern;
 import com.formation.computerdatabase.commons.Pageable;
 import com.formation.computerdatabase.model.Company;
 import com.formation.computerdatabase.model.Computer;
-import com.formation.computerdatabase.service.ComputerDatabaseService;
+import com.formation.computerdatabase.service.CompanyService;
+import com.formation.computerdatabase.service.ComputerService;
 import com.formation.computerdatabase.service.ServiceFactory;
 import com.formation.computerdatabase.util.DateUtil;
 
@@ -17,10 +18,12 @@ public class ConsoleClient {
 
 	private final Scanner scanner = new Scanner(System.in);
 
-	private ComputerDatabaseService service;
+	private ComputerService computerService;
+	private CompanyService companyService;
 
 	public ConsoleClient() {
-		service = ServiceFactory.INSTANCE.getService();
+		computerService = (ComputerService) ServiceFactory.INSTANCE.getService(ComputerService.KEY);
+		companyService = (CompanyService) ServiceFactory.INSTANCE.getService(CompanyService.KEY);
 	}
 
 	private void showMenu() {
@@ -78,7 +81,7 @@ public class ConsoleClient {
 		offset = Integer.parseInt(this.getInput("Select the page:"));
 		size = Integer.parseInt(this.getInput("Select the size:"));
 		Pageable<Computer> page = new Pageable<Computer>(offset, size);
-		page = service.retrievePage(page);
+		page = computerService.retrievePage(page);
 		System.out.println("Show computers:");
 		System.out.println("ID | NAME");
 		System.out.println("--------------------------");
@@ -90,7 +93,7 @@ public class ConsoleClient {
 	}
 	
 	private void showAllComputers() {
-		List<Computer> computers = service.retrieveAllComputers();
+		List<Computer> computers = computerService.retrieveAll();
 		System.out.println("Show computers:");
 		System.out.println("ID | NAME");
 		System.out.println("--------------------------");
@@ -101,7 +104,7 @@ public class ConsoleClient {
 	}
 
 	private void showAllCompanies() {
-		List<Company> companies = service.retrieveAllCompanies();
+		List<Company> companies = companyService.retrieveAll();
 		System.out.println("Show companies:");
 		System.out.println("ID | NAME");
 		System.out.println("--------------------------");
@@ -116,8 +119,8 @@ public class ConsoleClient {
 		Long l = null;
 
 		System.out.println("Enter computer id: ");
-		l = getNextLong();
-		Computer c = service.retrieveOneComputer(l);
+		l = scanner.nextLong();
+		Computer c = computerService.retrieveOne(l);
 
 		System.out.println(c.toString());
 		this.anyKeyToMenu();
@@ -150,11 +153,11 @@ public class ConsoleClient {
 
 		input = getInputWithPattern("Enter company id or leave empty:", p);
 		if (!input.isEmpty()) {
-			b.company(service.retrieveOneCompany(Long.parseLong(input)));
+			b.company(companyService.retrieveOne(Long.parseLong(input)));
 		}
 
 		Computer c = b.build();
-		service.saveComputer(c);
+		computerService.save(c);
 		System.out.println("Computer created with id:" + c.getId());
 		this.anyKeyToMenu();
 	}
@@ -165,9 +168,8 @@ public class ConsoleClient {
 		String input = null;
 
 		System.out.println("Enter computer id: ");
-		l = getNextLong();
-		
-		Computer c = service.retrieveOneComputer(l);
+		l = scanner.nextLong();
+		Computer c = computerService.retrieveOne(l);
 
 		System.out.println(c.toString());
 		
@@ -198,10 +200,10 @@ public class ConsoleClient {
 		
 		if("y".equals(getInput("Do you wish to change the campany id? (y or n)"))) {
 			l = scanner.nextLong();			
-			c.setCompany(service.retrieveOneCompany(l));
+			c.setCompany(companyService.retrieveOne(l));
 		}
 		
-		service.saveComputer(c);
+		computerService.save(c);
 		System.out.println("Computer edited.");
 		this.anyKeyToMenu();
 
@@ -214,7 +216,7 @@ public class ConsoleClient {
 		System.out.println("Enter computer id: "); 
 		l = getNextLong();
 		
-		service.deleteComputer(l);
+		computerService.delete(l);
 
 		System.out.println(l+" is deleted.");
 		this.anyKeyToMenu();

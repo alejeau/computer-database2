@@ -9,8 +9,16 @@ import com.formation.computerdatabase.model.Company;
 import com.formation.computerdatabase.model.Computer;
 import com.formation.computerdatabase.persistence.mapper.RowMapper;
 
+/**
+ * This class is the implementation of RowMapper with the type Company
+ */
 public class ComputerRowMapper implements RowMapper<Computer> {
-
+	/**
+	 * Maps a {@link ResultSet} to a Computer
+	 * @param rs
+	 * @return {@link Computer}
+	 * @throws SQLException
+	 */
 	@Override
 	public Computer mapRow(ResultSet rs) throws SQLException {
 		if (rs == null || !rs.next()) {
@@ -18,7 +26,12 @@ public class ComputerRowMapper implements RowMapper<Computer> {
 		}
 		return computerMapper(rs);
 	}
-
+	/**
+	 * Maps a {@link ResultSet} to a List of Computer
+	 * @param rs
+	 * @return List of {@link Computer}
+	 * @throws SQLException
+	 */
 	@Override
 	public List<Computer> mapRows(ResultSet rs) throws SQLException {
 		List<Computer> computers = new ArrayList<Computer>();
