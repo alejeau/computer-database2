@@ -13,12 +13,19 @@ import com.formation.computerdatabase.persistence.EntityManagerFactory;
 import com.formation.computerdatabase.persistence.mapper.RowMapper;
 import com.formation.computerdatabase.persistence.mapper.impl.CompanyRowMapper;
 
+/**
+ * This class is the implementation of the interface {@link CompanyDao}
+ */
 public class CompanyDaoImpl implements CompanyDao {
 
 	private RowMapper<Company> companyRowMapper = new CompanyRowMapper();
 
 	private static final String RETRIEVE_ONE = "select ca.id, ca.name from company ca where ca.id = ?;";
 
+	/**
+	 * Retrieve one Company from its id
+	 * @return {@link Company}
+	 */
 	@Override
 	public Company retrieveOne(Long id) {
 		Connection conn = null;
@@ -43,6 +50,11 @@ public class CompanyDaoImpl implements CompanyDao {
 
 	private static final String RETRIEVE_ALL = "select ca.id, ca.name from company ca;";
 
+	
+	/**
+	 * Retrieve all the Company from the database
+	 * @return List of {@link Company}
+	 */
 	@Override
 	public List<Company> retrieveAll() {
 		Connection conn = null;

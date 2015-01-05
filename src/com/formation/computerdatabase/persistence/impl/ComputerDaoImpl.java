@@ -13,13 +13,18 @@ import com.formation.computerdatabase.persistence.ComputerDao;
 import com.formation.computerdatabase.persistence.EntityManagerFactory;
 import com.formation.computerdatabase.persistence.mapper.RowMapper;
 import com.formation.computerdatabase.persistence.mapper.impl.ComputerRowMapper;
-
+/**
+ * This class is the implementation of the interface {@link ComputerDao}
+ */
 public class ComputerDaoImpl implements ComputerDao {
 
 	private RowMapper<Computer> computerRowMapper = new ComputerRowMapper();
 
 	private static final String CREATE = "insert into computer(name, introduced, discontinued, company_id) values (?, ?, ?, ?);";
 
+	/**
+	 * Create a {@link Computer} in the database
+	 */
 	@Override
 	public void create(Computer computer) {
 		Connection conn = null;
@@ -61,6 +66,10 @@ public class ComputerDaoImpl implements ComputerDao {
 
 	private static final String RETRIEVE_ALL = "select cp.id, cp.name, cp.introduced, cp.discontinued, ca.id, ca.name from computer cp left join company ca on cp.company_id = ca.id;";
 
+	/**
+	 * Retrieve all the Computers from the database
+	 * @return List of {@link Computer}
+	 */
 	@Override
 	public List<Computer> retrieveAll() {
 		Connection conn = null;
@@ -83,6 +92,10 @@ public class ComputerDaoImpl implements ComputerDao {
 
 	private static final String RETRIEVE_ONE = "select cp.id, cp.name, cp.introduced, cp.discontinued, ca.id, ca.name from computer cp left join company ca on cp.company_id = ca.id where cp.id = ?;";
 
+	/**
+	 * Retrieve one Computer from its id
+	 * @return {@link Computer}
+	 */
 	@Override
 	public Computer retrieveOne(Long id) {
 		Connection conn = null;
@@ -130,6 +143,9 @@ public class ComputerDaoImpl implements ComputerDao {
 
 	private static final String UPDATE = "update computer set name = ?, introduced = ?, discontinued = ?, company_id = ? where id = ?";
 
+	/**
+	 * Update a {@link Computer} in the database
+	 */
 	@Override
 	public void update(Computer computer) {
 		Connection conn = null;
@@ -166,7 +182,10 @@ public class ComputerDaoImpl implements ComputerDao {
 	}
 	
 	private static final String DELETE = "delete from computer where id= ?";
-		
+	
+	/**
+	 * Delete a {@link Computer} from its id
+	 */
 	@Override
 	public void delete(Long id) {
 		Connection conn = null;
@@ -185,6 +204,9 @@ public class ComputerDaoImpl implements ComputerDao {
 		}
 	}
 
+	/**
+	 * Delete a List of {@link Computer} from their ids
+	 */
 	@Override
 	public void delete(List<Long> ids) {
 		for(Long id: ids) {

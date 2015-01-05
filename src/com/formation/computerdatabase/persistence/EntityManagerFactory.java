@@ -13,6 +13,9 @@ import com.formation.computerdatabase.exception.PersistenceException;
 import com.formation.computerdatabase.persistence.impl.CompanyDaoImpl;
 import com.formation.computerdatabase.persistence.impl.ComputerDaoImpl;
 
+/**
+ * This singleton class is used to manage connection to the database and retrieve DAOs
+ */
 public enum EntityManagerFactory {
 
 	INSTANCE;
@@ -28,7 +31,6 @@ public enum EntityManagerFactory {
 	 * Private constructor
 	 --------------------------------------------------------------*/
 	private EntityManagerFactory() {
-
 		// Retrieve connection properties
 		properties = new Properties();
 		try {
@@ -59,11 +61,20 @@ public enum EntityManagerFactory {
 	/*--------------------------------------------------------------
 	 * Getters
 	 --------------------------------------------------------------*/
+	/**
+	 * Retrieve the DAO associated to the given key
+	 * @param the DAO Key
+	 * @return the associated DAO
+	 */
 	@SuppressWarnings("rawtypes")
 	public Dao getDao(String key) {
 		return daos.get(key);
 	}
 
+	/**
+	 * Retrieve the database connection 
+	 * @return the connection
+	 */
 	public Connection getConnection() {
 		try {
 			return DriverManager.getConnection(properties.getProperty("db.url"), properties.getProperty("db.username"),
@@ -75,10 +86,21 @@ public enum EntityManagerFactory {
 		}
 	}
 
+	/**
+	 * Close the given connection and statement
+	 * @param connection
+	 * @param statement
+	 */
 	public void closeConnection(Connection conn, Statement stmt) {
 		closeConnection(conn, stmt, null);
 	}
 
+	/**
+	 * Close the given connection, statement and result set
+	 * @param connection
+	 * @param statement
+	 * @param resultSet
+	 */
 	public void closeConnection(Connection conn, Statement stmt, ResultSet rs) {
 		try {
 			if (conn != null)
