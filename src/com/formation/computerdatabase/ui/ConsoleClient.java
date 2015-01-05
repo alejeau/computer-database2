@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import com.formation.computerdatabase.commons.Pageable;
 import com.formation.computerdatabase.model.Company;
 import com.formation.computerdatabase.model.Computer;
 import com.formation.computerdatabase.service.ComputerDatabaseService;
@@ -27,19 +28,20 @@ public class ConsoleClient {
 		System.out.println("Main menu");
 		System.out.println("--------------------------");
 		System.out.println("a) List computers");
-		System.out.println("b) List companies");
-		System.out.println("c) Show computer details");
-		System.out.println("d) Add computer");
-		System.out.println("e) Edit computer");
-		System.out.println("f) Delete computer");
+		System.out.println("b) List of a range of computers");
+		System.out.println("c) List companies");
+		System.out.println("d) Show computer details");
+		System.out.println("e) Add computer");
+		System.out.println("f) Edit computer");
+		System.out.println("g) Delete computer");
 		System.out.println("g) Exit application");
 
 		// Option regex
-		Pattern p = Pattern.compile("^[a-g]$");
+		Pattern p = Pattern.compile("^[a-h]$");
 		String s = null;
 
 		do {
-			System.out.println("Choose an option (a-g):");
+			System.out.println("Choose an option (a-h):");
 			s = scanner.next();
 		} while (!p.matcher(s = s.toLowerCase()).find());
 
@@ -48,26 +50,45 @@ public class ConsoleClient {
 			showAllComputers();
 			break;
 		case "b":
-			showAllCompanies();
+			showRangeComputers();
 			break;
 		case "c":
-			showComputer();
+			showAllCompanies();
 			break;
 		case "d":
-			addComputer();
+			showComputer();
 			break;
 		case "e":
-			editComputer();
+			addComputer();
 			break;
 		case "f":
-			deleteComputer();
+			editComputer();
 			break;
 		case "g":
+			deleteComputer();
+			break;
+		case "h":
 			exitApplication();
 			break;
 		}
 	}
 
+	private void showRangeComputers() {
+		int offset, size;
+		offset = Integer.parseInt(this.getInput("Select the page:"));
+		size = Integer.parseInt(this.getInput("Select the size:"));
+		Pageable<Computer> page = new Pageable<Computer>(offset, size);
+		page = service.retrievePage(page);
+		System.out.println("Show computers:");
+		System.out.println("ID | NAME");
+		System.out.println("--------------------------");
+		List<Computer> computers = page.getComputers();
+		for (Computer c : computers) {
+			System.out.println(new StringBuilder().append(c.getId()).append(" - ").append(c.getName()).toString());
+		}
+		this.anyKeyToMenu();
+	}
+	
 	private void showAllComputers() {
 		List<Computer> computers = service.retrieveAllComputers();
 		System.out.println("Show computers:");
@@ -95,7 +116,7 @@ public class ConsoleClient {
 		Long l = null;
 
 		System.out.println("Enter computer id: ");
-		l = scanner.nextLong();
+		l = getNextLong();
 		Computer c = service.retrieveOneComputer(l);
 
 		System.out.println(c.toString());
@@ -144,7 +165,8 @@ public class ConsoleClient {
 		String input = null;
 
 		System.out.println("Enter computer id: ");
-		l = scanner.nextLong();
+		l = getNextLong();
+		
 		Computer c = service.retrieveOneComputer(l);
 
 		System.out.println(c.toString());
@@ -190,7 +212,7 @@ public class ConsoleClient {
 		Long l = null;
 
 		System.out.println("Enter computer id: "); 
-		l = scanner.nextLong();
+		l = getNextLong();
 		
 		service.deleteComputer(l);
 
@@ -210,9 +232,10 @@ public class ConsoleClient {
 	
 	private String getInputWithPattern(String command, Pattern pattern) {
 		System.out.println(command);
+		scanner.next();
 		String input = null;
 		do {
-			input = scanner.next().trim();
+			input = scanner.next();
 		} while ( !pattern.matcher(input).find());
 		return input;
 	}
@@ -223,14 +246,30 @@ public class ConsoleClient {
 		System.out.println("The application was correctly closed.");
 	}
 
+	/**
+	 * 
+	 *  Take the next long with validation on the nature of the return object.
+	 */
+	private long getNextLong() {
+		do {
+			if(scanner.hasNext()) {
+				if(scanner.hasNextLong()) {
+					break;
+				} else {
+					System.out.println("Please enter a valid number format.");
+					/* avoid infinite loop by reading the syso above */
+					scanner.next();
+				}
+			}
+		} while(true);
+		return scanner.nextLong();
+	}
+
 	private void anyKeyToMenu() {
-		System.out.println("Press 'r' to return to the main menu...");
+		System.out.println("Press any key to return to the main menu...");
 		String input = null;
 		do {
 			input = scanner.next();
-			if( "r".equals(input)) {
-				break;
-			}
 		} while (input.isEmpty());
 	}
 
@@ -238,7 +277,6 @@ public class ConsoleClient {
 		ConsoleClient c = new ConsoleClient();
 		while(c.continueApplication) {
 			c.showMenu();
-			System.out.println("one main loop");
 		}
 	}
 }

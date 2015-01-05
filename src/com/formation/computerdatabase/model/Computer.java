@@ -1,11 +1,7 @@
 package com.formation.computerdatabase.model;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.formation.computerdatabase.exception.DateFormatException;
 import com.formation.computerdatabase.util.DateUtil;
 
 public class Computer {
@@ -46,8 +42,12 @@ public class Computer {
 
 	@Override
 	public String toString() {
-		return "Computer [id=" + id + ", name=" + name + ", introduced=" + introduced + ", discontinued="
-				+ discontinued + ", company=" + company + "]";
+            return new StringBuilder("Computer [id=").append(id)
+                             .append(", name=").append(name)
+                             .append(", introduced=").append(introduced)
+                             .append(", discontinued=").append(discontinued)
+                             .append(", company=").append(company)
+                             .append("]").toString();
 	}
 
 	@Override
@@ -127,11 +127,6 @@ public class Computer {
 	public void setIntroduced(Date introduced) {
 		this.introduced = introduced;
 	}	
-
-	public String getIntroducedString() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	public Date getDiscontinued() {
 		return discontinued;

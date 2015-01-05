@@ -12,13 +12,10 @@ public class CompanyRowMapper implements RowMapper<Company> {
 
 	@Override
 	public Company mapRow(ResultSet rs) throws SQLException {
-		Company company = new Company();
 		if (rs == null || !rs.next()) {
-			return company;
+			return new Company();
 		}
-		company.setId(rs.getLong(COMPANY_PREFIX + "id"));
-		company.setName(rs.getString(COMPANY_PREFIX + "name"));
-		return company;
+		return companyMapper(rs);
 	}
 
 	@Override
@@ -28,13 +25,17 @@ public class CompanyRowMapper implements RowMapper<Company> {
 			return companies;
 		}
 		do {
-			Company company = new Company();
-
-			company.setId(rs.getLong(COMPANY_PREFIX + "id"));
-			company.setName(rs.getString(COMPANY_PREFIX + "name"));
-			companies.add(company);
+			companies.add(companyMapper(rs));
 		} while (rs.next());
 		return companies;
+	}
+	
+	private Company companyMapper(ResultSet rs) throws SQLException {
+		Company company = new Company();
+
+		company.setId(rs.getLong(COMPANY_PREFIX + "id"));
+		company.setName(rs.getString(COMPANY_PREFIX + "name"));
+		return company;
 	}
 
 }
