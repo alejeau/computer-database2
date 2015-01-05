@@ -104,7 +104,7 @@ public class ComputerDaoImpl implements ComputerDao {
 		return computer;
 	}
 	
-	private static final String RETRIEVE_PAGE = "select * from computer limit ? offset ?";
+	private static final String RETRIEVE_PAGE = "select cp.id, cp.name, cp.introduced, cp.discontinued, ca.id, ca.name from computer cp left join company ca on cp.company_id = ca.id limit ? offset ?";
 	
 	@Override
 	public List<Computer> retrieveComputersWithOffsetAndLimit(int page, int size) {
@@ -117,7 +117,7 @@ public class ComputerDaoImpl implements ComputerDao {
 			conn = EntityManagerFactory.INSTANCE.getConnection();
 			stmt = conn.prepareStatement(RETRIEVE_PAGE);
 			stmt.setLong(1, (page-1)*size);
-			stmt.setLong(1, size);
+			stmt.setLong(2, size);
 			rs = stmt.executeQuery();
 			computers = computerRowMapper.mapRows(rs);
 		} catch (SQLException e) {

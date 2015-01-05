@@ -28,10 +28,7 @@ public class Company {
 
     @Override
     public String toString() {
-        return "Company[" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ']';
+    	return new StringBuilder("Company[id=").append(id).append(", name='").append(name).append("\']").toString();
     }
 
     @Override

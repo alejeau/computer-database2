@@ -21,7 +21,6 @@ public class DateUtil {
 		DateFormat df = new SimpleDateFormat(DATE_FORMAT);
 		try {
 			date = df.parse(stringDate);
-			System.out.println();
 		} catch (ParseException e) {
 			e.printStackTrace();
 			throw new DateFormatException("Wrong date format was provided.", e);
