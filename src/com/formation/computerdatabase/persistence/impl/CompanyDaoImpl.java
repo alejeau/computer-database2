@@ -37,7 +37,11 @@ public class CompanyDaoImpl implements CompanyDao {
 			conn = EntityManagerFactory.INSTANCE.getConnection();
 			stmt = conn.prepareStatement(RETRIEVE_ONE);
 			System.out.println("id: "+id);
-			stmt.setLong(1, id);
+			if(id !=  null) {
+				stmt.setLong(1, id);
+			} else {
+				stmt.setNull(1, java.sql.Types.NULL);
+			}
 			rs = stmt.executeQuery();
 			company = companyRowMapper.mapRow(rs);
 		} catch (SQLException e) {

@@ -9,7 +9,6 @@ public class Pageable<T> {
 	private int size = 10;
 
 	public Pageable(int page, int size) {
-		super();
 		this.page = page;
 		this.size = size;
 	}

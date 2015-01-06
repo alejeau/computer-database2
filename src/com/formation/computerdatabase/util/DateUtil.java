@@ -20,7 +20,11 @@ public class DateUtil {
 		Date date;
 		DateFormat df = new SimpleDateFormat(DATE_FORMAT);
 		try {
-			date = df.parse(stringDate);
+			if(stringDate != null) {
+				date = df.parse(stringDate);
+			} else {
+				date = null;
+			}
 		} catch (ParseException e) {
 			e.printStackTrace();
 			throw new DateFormatException("Wrong date format was provided.", e);

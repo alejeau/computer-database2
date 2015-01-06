@@ -188,7 +188,7 @@ public class Computer {
 		}
 
 		public Builder discontinued(String discontinued) {
-			c.introduced = DateUtil.stringToDate(discontinued);
+			c.discontinued = DateUtil.stringToDate(discontinued);
 			return this;
 		}
 

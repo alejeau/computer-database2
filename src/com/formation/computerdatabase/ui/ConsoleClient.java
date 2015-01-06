@@ -10,7 +10,7 @@ import com.formation.computerdatabase.model.Computer;
 import com.formation.computerdatabase.service.CompanyService;
 import com.formation.computerdatabase.service.ComputerService;
 import com.formation.computerdatabase.service.ServiceFactory;
-import com.formation.computerdatabase.util.DateUtil;
+import com.formation.computerdatabase.util.ScannerUtil;
 
 public class ConsoleClient {
 	
@@ -78,8 +78,8 @@ public class ConsoleClient {
 
 	private void showRangeComputers() {
 		int offset, size;
-		offset = Integer.parseInt(this.getInput("Select the page:"));
-		size = Integer.parseInt(this.getInput("Select the size:"));
+		offset = ScannerUtil.getNextLong("Select the page:");
+		size = ScannerUtil.getNextLong("Select the size:");
 		Pageable<Computer> page = new Pageable<Computer>(offset, size);
 		page = computerService.retrievePage(page);
 		System.out.println("Show computers:");
@@ -89,7 +89,7 @@ public class ConsoleClient {
 		for (Computer c : computers) {
 			System.out.println(new StringBuilder().append(c.getId()).append(" - ").append(c.getName()).toString());
 		}
-		this.anyKeyToMenu();
+		ScannerUtil.waitNextLine();
 	}
 	
 	private void showAllComputers() {
@@ -100,7 +100,7 @@ public class ConsoleClient {
 		for (Computer c : computers) {
 			System.out.println(new StringBuilder().append(c.getId()).append(" - ").append(c.getName()).toString());
 		}
-		this.anyKeyToMenu();
+		ScannerUtil.waitNextLine();
 	}
 
 	private void showAllCompanies() {
@@ -111,20 +111,16 @@ public class ConsoleClient {
 		for (Company c : companies) {
 			System.out.println(new StringBuilder().append(c.getId()).append(" - ").append(c.getName()).toString());
 		}
-		this.anyKeyToMenu();
+		ScannerUtil.waitNextLine();
 	}
 
 	private void showComputer() {
-		System.out.println("Computer details:");
-		Long l = null;
-
-		System.out.println("Enter computer id: ");
-		l = scanner.nextLong();
-		Computer c = computerService.retrieveOne(l);
-
-		System.out.println(c.toString());
-		this.anyKeyToMenu();
-
+		System.out.println("Enter computer id or exit: ");
+		Long input = ScannerUtil.getNextLong();
+		if(input != null ) {
+			System.out.println(computerService.retrieveOne(input).toString());
+			ScannerUtil.waitNextLine();
+		}		
 	}
 
 	private void addComputer() {
@@ -132,114 +128,98 @@ public class ConsoleClient {
 		String intr = null;
 		String input = null;
 
-		Computer.Builder b = Computer.builder(getInput("Enter computer name: "));
+		Computer.Builder b = Computer.builder(ScannerUtil.getName("Enter computer name: "));
 
-		Pattern p = Pattern.compile("^[1-2][0-9]{3}-([0][1-9]|1[0-2])-([0-2][1-9]|3[0-1])$");
+		Pattern pattern = Pattern.compile("^[1-2][0-9]{3}-([0][1-9]|1[0-2])-([0-2][1-9]|3[0-1])$");
 
-		intr = getInputWithPattern("Enter introduced date (yyyy-mm-dd) or leave empty: ", p);
-		if (! intr.isEmpty()) {
-			b.introduced(intr);
+		intr = ScannerUtil.getNextDate("Enter introduced date (yyyy-mm-dd) or leave empty: "
+				, pattern);
+		b.introduced(intr);
+		
+		if (intr != null) {
+				input = ScannerUtil.getNextDate("Enter discontinued date (yyyy-mm-dd) after " + intr + " or leave empty: "
+						, pattern
+						, intr);
+			b.discontinued(input);			
+		} else {			
+			input = ScannerUtil.getNextDate("Enter discontinued date (yyyy-mm-dd) or leave empty: "
+					, pattern);
+			b.discontinued(input);			
 		}
 
-		/* loop while the discontinued date is not older as the introducted date */
-		do {
-			input = getInputWithPattern("Enter discontinued date (yyyy-mm-dd) or leave empty: ", p);
-		} while ( (intr != null ) && ( DateUtil.stringToDate(input).before(DateUtil.stringToDate(intr))));
-		if (!input.isEmpty()) {
-			b.discontinued(input);
-		}
-
-		p = Pattern.compile("^[0-9]+$");
-
-		input = getInputWithPattern("Enter company id or leave empty:", p);
-		if (!input.isEmpty()) {
-			b.company(companyService.retrieveOne(Long.parseLong(input)));
+		System.out.println("Enter company id or leave empty:");
+		Long result = ScannerUtil.getNextLong();
+		if(result != null) {
+			b.company(companyService.retrieveOne(result));
 		}
 
 		Computer c = b.build();
 		computerService.save(c);
 		System.out.println("Computer created with id:" + c.getId());
-		this.anyKeyToMenu();
+		ScannerUtil.waitNextLine();
 	}
 
 	public void editComputer() {
 		System.out.println("Computer edition:");
-		Long l = null;
 		String input = null;
 
-		System.out.println("Enter computer id: ");
-		l = scanner.nextLong();
-		Computer c = computerService.retrieveOne(l);
+		System.out.println("Enter computer id or leave empty to exit: ");
 
-		System.out.println(c.toString());
-		
-		if("y".equals(this.getInput("Do you wish to change the name? (y or n)")) ) {
-			c.setName(getInput("Enter computer name: "));
-		}
+		Long result = ScannerUtil.getNextLong();
+		if(result != null) {
+			Computer c = computerService.retrieveOne(result);
 
-		Pattern p = Pattern.compile("^[1-2][0-9]{3}-([0][1-9]|1[0-2])-([0-2][1-9]|3[0-1])$");
-		
-		if("y".equals(getInput("Do you wish to change the introducted date? (y or n)"))) {
-			input = getInputWithPattern("Enter introduced date (yyyy-mm-dd) or leave empty: ", p);
-			if (! input.isEmpty()) {
+			System.out.println(c.toString());
+			
+			if("y".equals(ScannerUtil.getName("Do you wish to change the name? (y or n)")) ) {
+				c.setName(ScannerUtil.getName("Enter computer name: "));
+			}
+	
+			Pattern pattern = Pattern.compile("^[1-2][0-9]{3}-([0][1-9]|1[0-2])-([0-2][1-9]|3[0-1])$");
+			
+			if("y".equals(ScannerUtil.getName("Do you wish to change the introducted date? (y or n)"))) {
+				input = ScannerUtil.getNextDate("Enter introduced date (yyyy-mm-dd) or leave empty: "
+						, pattern);
 				c.setIntroduced(input);
 			}
-		}
-		
-		if("y".equals(getInput("Do you wish to change the discontinued date? (y or n)"))) {
 			
-			/* loop while the discontinued date is not older as the introducted date */
-			do {
-				input = getInputWithPattern("Enter discontinued date (yyyy-mm-dd) or leave empty: ", p);
-			} while ( DateUtil.stringToDate(input).before(c.getIntroduced()));
-			
-			if (! input.isEmpty()) {
-				c.setDiscontinued(input);
+			if("y".equals(ScannerUtil.getName("Do you wish to change the discontinued date? (y or n)"))) {
+				
+				if(c.getIntroduced() != null ) {
+						input = ScannerUtil.getNextDate("Enter discontinued date (yyyy-mm-dd) " + c.getIntroduced() + " or leave empty: "
+								, pattern);
+						
+					c.setDiscontinued(input);
+				} else {
+					input = ScannerUtil.getNextDate("Enter discontinued date (yyyy-mm-dd) or leave empty: "
+							, pattern);
+					c.setDiscontinued(input);			
+				}
 			}
+			
+			if("y".equals(ScannerUtil.getName("Do you wish to change the campany id? (y or n)"))) {
+				c.setCompany(companyService.retrieveOne(ScannerUtil.getNextLong()));
+			}
+			
+			computerService.save(c);
+			System.out.println("Computer edited.");
+			ScannerUtil.waitNextLine();
 		}
-		
-		if("y".equals(getInput("Do you wish to change the campany id? (y or n)"))) {
-			l = scanner.nextLong();			
-			c.setCompany(companyService.retrieveOne(l));
-		}
-		
-		computerService.save(c);
-		System.out.println("Computer edited.");
-		this.anyKeyToMenu();
 
 	}
 
 	public void deleteComputer() {
 		System.out.println("Computer to delete:");
-		Long l = null;
+		Long input = null;
 
-		System.out.println("Enter computer id: "); 
-		l = getNextLong();
-		
-		computerService.delete(l);
+		System.out.println("Enter computer id or leave empty to exit: "); 
+		input = ScannerUtil.getNextLong();
+		if(input != null) {
+			computerService.delete(input);
+		}
 
-		System.out.println(l+" is deleted.");
-		this.anyKeyToMenu();
-	}
-	
-	private String getInput(String command) {
-		String input = null;
-
-		do {
-			System.out.println(command);
-			input = scanner.next();
-		} while (input.isEmpty());
-		return input;
-	}
-	
-	private String getInputWithPattern(String command, Pattern pattern) {
-		System.out.println(command);
-		scanner.next();
-		String input = null;
-		do {
-			input = scanner.next();
-		} while ( !pattern.matcher(input).find());
-		return input;
+		System.out.println(input +" is deleted.");
+		ScannerUtil.waitNextLine();
 	}
 
 	private void exitApplication() {
@@ -248,37 +228,12 @@ public class ConsoleClient {
 		System.out.println("The application was correctly closed.");
 	}
 
-	/**
-	 * 
-	 *  Take the next long with validation on the nature of the return object.
-	 */
-	private long getNextLong() {
-		do {
-			if(scanner.hasNext()) {
-				if(scanner.hasNextLong()) {
-					break;
-				} else {
-					System.out.println("Please enter a valid number format.");
-					/* avoid infinite loop by reading the syso above */
-					scanner.next();
-				}
-			}
-		} while(true);
-		return scanner.nextLong();
-	}
-
-	private void anyKeyToMenu() {
-		System.out.println("Press any key to return to the main menu...");
-		String input = null;
-		do {
-			input = scanner.next();
-		} while (input.isEmpty());
-	}
 
 	public static void main(String[] args) {
 		ConsoleClient c = new ConsoleClient();
 		while(c.continueApplication) {
 			c.showMenu();
 		}
+		
 	}
 }

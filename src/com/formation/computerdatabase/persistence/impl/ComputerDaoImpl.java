@@ -46,7 +46,7 @@ public class ComputerDaoImpl implements ComputerDao {
 			} else {
 				stmt.setNull(3, java.sql.Types.NULL);
 			}
-			if(computer.getCompany() != null) {
+			if(computer.getCompany() != null && computer.getCompany().getId() != null) {
 				stmt.setLong(4, computer.getCompany().getId());
 			} else {
 				stmt.setNull(4, java.sql.Types.NULL);
@@ -106,9 +106,11 @@ public class ComputerDaoImpl implements ComputerDao {
 		try {
 			conn = EntityManagerFactory.INSTANCE.getConnection();
 			stmt = conn.prepareStatement(RETRIEVE_ONE);
-			stmt.setLong(1, id);
-			rs = stmt.executeQuery();
-			computer = computerRowMapper.mapRow(rs);
+			if(id != null) {
+				stmt.setLong(1, id);
+				rs = stmt.executeQuery();
+				computer = computerRowMapper.mapRow(rs);
+			} 
 		} catch (SQLException e) {
 			throw new PersistenceException(e.getMessage(), e);
 		} finally {
