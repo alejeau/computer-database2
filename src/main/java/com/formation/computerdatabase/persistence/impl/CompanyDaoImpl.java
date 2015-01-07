@@ -24,6 +24,7 @@ public class CompanyDaoImpl implements CompanyDao {
 
 	/**
 	 * Retrieve one Company from its id
+	 * use PreparedStatement to avoid SQL injection
 	 * @return {@link Company}
 	 */
 	@Override
@@ -37,7 +38,7 @@ public class CompanyDaoImpl implements CompanyDao {
 			conn = EntityManagerFactory.INSTANCE.getConnection();
 			stmt = conn.prepareStatement(RETRIEVE_ONE);
 			System.out.println("id: "+id);
-			if(id !=  null) {
+			if(id !=  null && id > 0) {
 				stmt.setLong(1, id);
 			} else {
 				stmt.setNull(1, java.sql.Types.NULL);
