@@ -2,6 +2,8 @@ package com.formation.computerdatabase.persistence.mapper.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,22 +18,24 @@ public class ComputerRowMapperTest {
 	public void rowMapperSingleComputer() throws SQLException {
 		
 		final ResultSet rsMock = Mockito.mock(ResultSet.class);
-		Mockito.when(rsMock.getString("id")).thenReturn("12");
-		Mockito.when(rsMock.getString("name")).thenReturn("mockComputer");
-		Mockito.when(rsMock.getString("introduced")).thenReturn("1991-01-12");
-		Mockito.when(rsMock.getString("discontinued")).thenReturn("1992-03-12");
-		Mockito.when(rsMock.getString("company_id")).thenReturn("3");
+		Mockito.when(rsMock.getLong("cp.id")).thenReturn(12L);
+		Mockito.when(rsMock.getString("cp.name")).thenReturn("mockComputer");
+		Mockito.when(rsMock.getString("cp.introduced")).thenReturn("1991-01-12");
+		Mockito.when(rsMock.getString("cp.discontinued")).thenReturn("1992-03-12");
+		Mockito.when(rsMock.getLong("ca.id")).thenReturn(3L);
+		Mockito.when(rsMock.getString("ca.name")).thenReturn("mockCompany");
 		Mockito.when(rsMock.next()).thenReturn(true).thenReturn(false);
 		
-		ComputerRowMapper computerRowMapper = new ComputerRowMapper();
-		Computer computerMock = computerRowMapper.mapRow(rsMock);
+		Computer computerMock = new ComputerRowMapper().mapRow(rsMock);
 		
-		Computer.Builder computerBuilder = Computer.builder("mockComputer");
 		Company company = new Company();
 		company.setId(3L);
-		computerBuilder.introduced("1991-01-12").discontinued("1992-03-12").company(company).id(3L);
 			
-		Assert.assertEquals(computerBuilder, computerMock);
+		Assert.assertEquals(Computer.builder("mockComputer")
+				.introduced("1991-01-12")
+				.discontinued("1992-03-12")
+				.company(new Company(3L, "mockCompany"))
+				.id(12L).build(), computerMock);
 		
 	}	
 	
@@ -39,24 +43,30 @@ public class ComputerRowMapperTest {
 	public void rowMapperListComputer() throws SQLException {
 		
 		final ResultSet rsMock = Mockito.mock(ResultSet.class);
-		Mockito.when(rsMock.getString("id")).thenReturn("12").thenReturn("24");
-		Mockito.when(rsMock.getString("name")).thenReturn("mockComputer").thenReturn("mockComputer2");
-		Mockito.when(rsMock.getString("introduced")).thenReturn("1991-01-12").thenReturn("2000-01-12");
-		Mockito.when(rsMock.getString("discontinued")).thenReturn("1992-03-12").thenReturn("2002-03-12");
-		Mockito.when(rsMock.getString("company_id")).thenReturn("3").thenReturn("4");
+		Mockito.when(rsMock.getLong("cp.id")).thenReturn(12L).thenReturn(24L);
+		Mockito.when(rsMock.getString("cp.name")).thenReturn("mockComputer").thenReturn("mockComputer2");
+		Mockito.when(rsMock.getString("cp.introduced")).thenReturn("1991-01-12").thenReturn("2000-01-12");
+		Mockito.when(rsMock.getString("cp.discontinued")).thenReturn("1992-03-12").thenReturn("2002-03-12");
+		Mockito.when(rsMock.getLong("ca.id")).thenReturn(3L).thenReturn(4L);
+		Mockito.when(rsMock.getString("ca.name")).thenReturn("mockCompany").thenReturn("mockCompany2");
 		Mockito.when(rsMock.next()).thenReturn(true).thenReturn(true).thenReturn(false);
+		List<Computer> computerMock = (List<Computer>) new ComputerRowMapper().mapRows(rsMock);
 		
-		ComputerRowMapper computerRowMapper = new ComputerRowMapper();
-		Computer computerMock = computerRowMapper.mapRow(rsMock);
+		List<Computer> computerList = new ArrayList<Computer>();
+
+		computerList.add(Computer.builder("mockComputer")
+				.introduced("1991-01-12")
+				.discontinued("1992-03-12")
+				.company(new Company(3L, "mockCompany"))
+				.id(12L).build());
 		
-		Computer.Builder computerBuilder = Computer.builder("mockComputer");
-		Company company = new Company();
-		company.setId(3L);
-		computerBuilder.introduced("1991-01-12").discontinued("1992-03-12").company(company).id(3L);
+		computerList.add(Computer.builder("mockComputer2")
+				.introduced("2000-01-12")
+				.discontinued("2002-03-12")
+				.company(new Company(4L, "mockCompany2"))
+				.id(24L).build());
 			
-		Assert.assertEquals(computerBuilder, computerMock);
+		Assert.assertEquals(computerList, computerMock);
 		
 	}
-	
-
 }
