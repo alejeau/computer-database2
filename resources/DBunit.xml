@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<dataset>
+	COMPUTER 	id='12'
+				name='dbUnitComputer'
+				introduced='2010-01-01'	
+				discontinued='2011-02-08'
+				company_id='3'
+	COMPUTER 	id='13'
+				name='dbUnitComputerDateNull'
+				introduced='NULL'	
+				discontinued='NULL'
+				company_id='3'
+	COMPUTER 	id='14'
+				name='dbUnitComputerCaNull'
+				introduced='2010-01-01'	
+				discontinued='2011-02-08'
+				company_id='NULL'
+	COMPANY 	id='3'
+				name='dbUnitComputerCaNull'
+</dataset>
