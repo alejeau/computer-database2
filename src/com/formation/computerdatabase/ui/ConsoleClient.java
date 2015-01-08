@@ -78,8 +78,8 @@ public class ConsoleClient {
 
 	private void showRangeComputers() {
 		int offset, size;
-		offset = ScannerUtil.getNextLong("Select the page:");
-		size = ScannerUtil.getNextLong("Select the size:");
+		offset = ScannerUtil.getNextInt("Select the page:");
+		size = ScannerUtil.getNextInt("Select the size:");
 		Pageable<Computer> page = new Pageable<Computer>(offset, size);
 		page = computerService.retrievePage(page);
 		System.out.println("Show computers:");

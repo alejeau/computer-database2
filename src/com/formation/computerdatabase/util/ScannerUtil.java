@@ -30,7 +30,7 @@ public final class ScannerUtil {
 	 * @param command
 	 * @return
 	 */
-	public static Integer getNextLong(String command) {
+	public static Integer getNextInt(String command) {
 		System.out.println(command);
 		String input = null;
 		

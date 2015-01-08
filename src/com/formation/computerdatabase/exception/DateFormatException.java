@@ -3,7 +3,7 @@ package com.formation.computerdatabase.exception;
 public class DateFormatException extends RuntimeException {
 	
 	private static final long serialVersionUID = 408850687147798196L;
-	private static final String MESSAGE = "Wrong date format provideds.";
+	private static final String MESSAGE = "Wrong date format provided.";
 	
 	public DateFormatException() {
 		super(MESSAGE);
