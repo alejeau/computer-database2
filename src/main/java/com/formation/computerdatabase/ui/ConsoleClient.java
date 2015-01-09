@@ -16,6 +16,8 @@ public class ConsoleClient {
 	
 	private boolean continueApplication = true;
 
+	public String secret;
+
 	private final Scanner scanner = new Scanner(System.in);
 
 	private ComputerService computerService;
@@ -234,6 +236,6 @@ public class ConsoleClient {
 		while(c.continueApplication) {
 			c.showMenu();
 		}
-		
+
 	}
 }

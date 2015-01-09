@@ -18,6 +18,10 @@ public class ComputerServiceImpl implements ComputerService {
 	public ComputerServiceImpl() {
 		computerDao = (ComputerDao) EntityManagerFactory.INSTANCE.getDao(ComputerDao.KEY);
 	}
+
+	public ComputerServiceImpl(ComputerDao computerDao) {
+		this.computerDao = computerDao;
+	}
 	
 	/**
 	 * Create or update a {@link Computer}

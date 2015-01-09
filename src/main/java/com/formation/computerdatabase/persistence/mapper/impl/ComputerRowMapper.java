@@ -21,8 +21,8 @@ public class ComputerRowMapper implements RowMapper<Computer> {
 	 */
 	@Override
 	public Computer mapRow(ResultSet rs) throws SQLException {
-		if (rs == null || !rs.next()) {
-			return new Computer();
+		if (rs == null) {
+			return null;
 		}
 		return computerMapper(rs);
 	}
@@ -35,12 +35,12 @@ public class ComputerRowMapper implements RowMapper<Computer> {
 	@Override
 	public List<Computer> mapRows(ResultSet rs) throws SQLException {
 		List<Computer> computers = new ArrayList<Computer>();
-		if (rs == null || !rs.next()) {
-			return computers;
+		if (rs == null) {
+			return null;
 		}
-		do {
+		while (rs.next()) {
 			computers.add(computerMapper(rs));
-		} while (rs.next());
+		}
 		return computers;
 	}
 	

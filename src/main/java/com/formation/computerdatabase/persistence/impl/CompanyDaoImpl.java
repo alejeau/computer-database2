@@ -37,7 +37,6 @@ public class CompanyDaoImpl implements CompanyDao {
 		try {
 			conn = EntityManagerFactory.INSTANCE.getConnection();
 			stmt = conn.prepareStatement(RETRIEVE_ONE);
-			System.out.println("id: "+id);
 			if(id !=  null && id > 0) {
 				stmt.setLong(1, id);
 			} else {
